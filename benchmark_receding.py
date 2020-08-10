@@ -34,10 +34,10 @@ def init_data(T, L):
     #prices = np.zeros((L, 7))
     prices = np.zeros((L, 3))
     for i in range(L): 
-        if (i % 48) < 32:
-            pb = 20.0
+        if ((i % 48) < 14) or ((i % 48) >= 46):
+            pb = 12.3
         else:
-            pb = 15.0
+            pb = 15.8
         prices[i, 1] = pb
         prices[i, 0] = 10.0
 
@@ -82,7 +82,7 @@ def onerun(data, loads, forecasts, errors=True):
 
     status = []
     times = []
-    for i in range(0, H - T):
+    for i in range(0, H):
         start = time.perf_counter()
         price = P[i:, :]
     #    load = L[i : i + T]
@@ -119,10 +119,10 @@ costs_keeping = []
 
 if __name__ == '__main__':
 
-    seed = int(sys.argv[1])
-    ID = int(sys.argv[2])
-    start = int(sys.argv[3])
-    filename = 'stats_sensitivity_receding_{}_{}_{}'.format(seed, ID, start)
+    # seed = int(sys.argv[1])
+    ID = int(sys.argv[1])
+    start = int(sys.argv[2])
+    filename = 'results/stats_sensitivity_receding_{}_{}'.format(ID, start)
 
     data, P, L = init_data(H, H)
     loads, forecasts = get_consumptions(ID, True, start, days)

@@ -116,21 +116,29 @@ def onerun(data, loads, forecasts, errors=True):
 costs_selling = []
 costs_keeping = []
 
-for seed in [1234, 2210, 1479, 1172]:
-    for ID in range(126):
-        for start in [10, 20, 30, 40]:
+# for seed in [1234, 2210, 1479, 1172]:
+#     for ID in range(126):
+#         for start in [10, 20, 30, 40]:
 
-            data, P, L = init_data(T, H)
-            loads, forecasts = get_consumptions(ID, True, start, days)
-            data_true = onerun(deepcopy(data), loads, forecasts, False)
-            data_errors = onerun(deepcopy(data), loads, forecasts, True)
 
-            costs = [X['history_cost'].sum() - 10.0 * X['charge'] for X in [data_true, data_errors]]
-            costs_selling.append(costs)
+if __name__ == '__main__':
 
-            costs_ = [X['history_cost'].sum() for X in [data_true, data_errors]]
-            costs_keeping.append(costs_)
+    #seed = int(sys.argv[1])
+    ID = int(sys.argv[1])
+    start = int(sys.argv[2])
+    filename = 'results/stats_sensitivity_rolling_{}_{}'.format(ID, start)
+
+    data, P, L = init_data(T, H)
+    loads, forecasts = get_consumptions(ID, True, start, days)
+    data_true = onerun(deepcopy(data), loads, forecasts, False)
+    data_errors = onerun(deepcopy(data), loads, forecasts, True)
+
+    costs = [X['history_cost'].sum() - 10.0 * X['charge'] for X in [data_true, data_errors]]
+    costs_selling.append(costs)
+
+    costs_ = [X['history_cost'].sum() for X in [data_true, data_errors]]
+    costs_keeping.append(costs_)
             
+    with open(filename, 'wb') as fh:
+        dill.dump([costs_selling, costs_keeping], fh)
 
-with open('stats_sensitivity', 'wb') as fh:
-    dill.dump([costs_selling, costs_keeping], fh)
